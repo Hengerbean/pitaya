@@ -380,8 +380,13 @@ func (a *agentImpl) Kick(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	_, err = a.conn.Write(p)
-	return err
+	pWrite := pendingWrite{
+		ctx:  ctx,
+		data: p,
+	}
+	a.chSend <- pWrite
+	// _, err = a.conn.Write(p)
+	return nil
 }
 
 // SetLastAt sets the last at to now
@@ -474,8 +479,9 @@ func (a *agentImpl) onSessionClosed(s session.Session) {
 
 // SendHandshakeResponse sends a handshake response
 func (a *agentImpl) SendHandshakeResponse() error {
-	_, err := a.conn.Write(hrd)
-	return err
+	a.chSend <- pendingWrite{data: hrd}
+	// _, err := a.conn.Write(hrd)
+	return nil
 }
 
 func (a *agentImpl) write() {
