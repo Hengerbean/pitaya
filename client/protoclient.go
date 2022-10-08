@@ -165,11 +165,15 @@ func getOutputInputNames(command map[string]interface{}) (string, string, error)
 // Get recursively all protos needed in a Unmarshal json.
 func getKeys(info map[string]interface{}, keysSet map[string]bool) {
 	for k, v := range info {
-		if strings.Contains(k, "protos.") {
+		if strings.Contains(k, "*protos.") {
 			kew := strings.Replace(k, "*", "", 1)
 			keysSet[kew] = true
 		}
-
+		if vStr, ok := v.(string); ok {
+			if strings.Contains(vStr, "protos.") {
+				keysSet[vStr] = true
+			}
+		}
 		listofouts, ok := v.([]interface{})
 		if ok {
 			for i := range listofouts {
