@@ -32,8 +32,8 @@ func ProtoDescriptors(protoName string) ([]byte, error) {
 		protoReflectTypePointer = reflect.TypeOf(et.New(0))
 	}
 
-	// protoReflectType := protoReflectTypePointer.Elem()
-	protoValue := reflect.New(protoReflectTypePointer).Elem()
+	protoReflectType := protoReflectTypePointer.Elem()
+	protoValue := reflect.New(protoReflectType)
 	descriptorMethod, ok := protoReflectTypePointer.MethodByName("Descriptor")
 	if !ok {
 		return nil, constants.ErrProtodescriptor
