@@ -450,6 +450,25 @@ func (pc *ProtoClient) ConnectTo(addr string, tlsConfig ...*tls.Config) error {
 	return nil
 }
 
+func (pc *ProtoClient) ConnectToWS(addr string, path string, tlsConfig ...*tls.Config) error {
+	err := pc.Client.ConnectToWS(addr, path, tlsConfig...)
+	if err != nil {
+		return err
+	}
+
+	if !pc.ready {
+		err = pc.LoadServerInfo(addr)
+		if err != nil {
+			return err
+		}
+	}
+
+	if pc.ready {
+		go pc.waitForData()
+	}
+	return nil
+}
+
 // ExportInformation export supported server commands information
 func (pc *ProtoClient) ExportInformation() *ProtoBufferInfo {
 	if !pc.ready {
