@@ -1,6 +1,8 @@
 package docgenerator
 
 import (
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
 	"reflect"
 	"strings"
 
@@ -22,8 +24,12 @@ func ProtoDescriptors(protoName string) ([]byte, error) {
 		protoName = strings.Replace(protoName, "types.", "google.protobuf.", 1)
 	}
 	protoReflectTypePointer := proto.MessageType(protoName)
-	if protoReflectTypePointer == nil {
-		return nil, constants.ErrProtodescriptor
+	if protoReflectTypePointer == nil { //enum type
+		et, _ := protoregistry.GlobalTypes.FindEnumByName(protoreflect.FullName(protoName))
+		if et == nil {
+			return nil, constants.ErrProtodescriptor
+		}
+		protoReflectTypePointer = reflect.TypeOf(et.New(0))
 	}
 
 	protoReflectType := protoReflectTypePointer.Elem()
