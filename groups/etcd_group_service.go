@@ -6,12 +6,12 @@ import (
 	"sync"
 	"time"
 
-	clientv3 "go.etcd.io/etcd/client/v3"
-	"go.etcd.io/etcd/client/v3/namespace"
-	"go.etcd.io/etcd/api/v3/mvccpb"
 	"github.com/topfreegames/pitaya/v2/config"
 	"github.com/topfreegames/pitaya/v2/constants"
 	"github.com/topfreegames/pitaya/v2/logger"
+	"go.etcd.io/etcd/api/v3/mvccpb"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/namespace"
 )
 
 var (
@@ -50,15 +50,20 @@ func initClientInstance(config config.EtcdGroupServiceConfig, clientOrNil *clien
 	return err
 }
 
-func createBaseClient(config config.EtcdGroupServiceConfig) (*clientv3.Client, error) {
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   config.Endpoints,
-		DialTimeout: config.DialTimeout,
-	})
+func createBaseClient(gs config.EtcdGroupServiceConfig) (*clientv3.Client, error) {
+	config := clientv3.Config{
+		Endpoints:   gs.Endpoints,
+		DialTimeout: gs.DialTimeout,
+	}
+	if gs.User != "" && gs.Pass != "" {
+		config.Username = gs.User
+		config.Password = gs.Pass
+	}
+	cli, err := clientv3.New(config)
 	if err != nil {
 		return nil, err
 	}
-	cli.KV = namespace.NewKV(cli.KV, config.Prefix)
+	cli.KV = namespace.NewKV(cli.KV, gs.Prefix)
 	return cli, nil
 }
 

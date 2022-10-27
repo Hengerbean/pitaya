@@ -564,6 +564,8 @@ func NewMemoryGroupConfig(conf *Config) *MemoryGroupConfig {
 
 // EtcdGroupServiceConfig provides ETCD configuration
 type EtcdGroupServiceConfig struct {
+	User               string
+	Pass               string
 	DialTimeout        time.Duration
 	Endpoints          []string
 	Prefix             string
@@ -573,6 +575,8 @@ type EtcdGroupServiceConfig struct {
 // NewDefaultEtcdGroupServiceConfig provides default ETCD configuration
 func NewDefaultEtcdGroupServiceConfig() *EtcdGroupServiceConfig {
 	return &EtcdGroupServiceConfig{
+		User:               "",
+		Pass:               "",
 		DialTimeout:        time.Duration(5 * time.Second),
 		Endpoints:          []string{"localhost:2379"},
 		Prefix:             "pitaya/",
@@ -591,6 +595,8 @@ func NewEtcdGroupServiceConfig(config *Config) *EtcdGroupServiceConfig {
 
 // ETCDBindingConfig provides configuration for ETCDBindingStorage
 type ETCDBindingConfig struct {
+	User        string
+	Pass        string
 	DialTimeout time.Duration
 	Endpoints   []string
 	Prefix      string
@@ -600,6 +606,8 @@ type ETCDBindingConfig struct {
 // NewDefaultETCDBindingConfig provides default configuration for ETCDBindingStorage
 func NewDefaultETCDBindingConfig() *ETCDBindingConfig {
 	return &ETCDBindingConfig{
+		User:        "",
+		Pass:        "",
 		DialTimeout: time.Duration(5 * time.Second),
 		Endpoints:   []string{"localhost:2379"},
 		Prefix:      "pitaya/",
